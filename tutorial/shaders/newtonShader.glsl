@@ -5,14 +5,12 @@ in vec3 normal0;
 in vec3 color0;
 in vec3 position0;
 
-uniform vec4 lightColor;
 uniform sampler2D sampler1;
-uniform vec4 lightDirection;
 uniform vec4 coeffs;
 uniform vec2 root1;
 uniform vec2 root2;
 uniform vec2 root3;
-uniform int IterationNum;
+uniform int iteration_num;
 
 out vec4 Color;
 
@@ -54,19 +52,24 @@ vec2 calc_z(){
 	vec2 z = vec2((root1.x + root2.x + root3.x) / 3, (root1.y + root2.y + root3.z) / 3);
     
 	int i;
-	for(i = 0; i < IterationNum; ++i)
-		z -= f(z) / df(z);
+	for(i = 0; i < iteration_num; ++i)
+		z -= complex_div(f(z), df(z));
 
 	return z;
+}
+
+float min3(float a, float b, float c) {
+	return (a < b && a < c) ? a : (b < c) ? b : c;
 }
 
 void main()
 {
 	vec2 final_z = calc_z();
 	float distance_1 = distance(final_z, root1), distance_2 = distance(final_z, root2), distance_3 = distance(final_z, root3);
-	float min_distance = min(distance_1, distance_2, distance_3);
+	float min_distance = min3(distance_1, distance_2, distance_3);
 
-	Color = min_distance == distance_1 ? vec4(1, 0, 0, 1) :
-	        min_distance == distance_2 ? vec4(0, 1, 0, 1) :
-			                             vec4(0, 0, 1, 1) ;
+	Color = (min_distance == distance_1) ? vec4(1, 0, 0, 1) :
+	        (min_distance == distance_2) ? vec4(0, 1, 0, 1) :
+			vec4(0, 0, 1, 1);
+	//Color = vec4(1,0,0,1);
 }

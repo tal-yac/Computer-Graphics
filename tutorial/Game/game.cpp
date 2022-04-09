@@ -26,14 +26,14 @@ void Game::Init()
 	unsigned int texIDs[3] = { 0 , 1, 2};
 	unsigned int slots[3] = { 0 , 1, 2 };
 	
-	AddShader("C:/Users/ipism/source/repos/Computer_Graphics/tutorial/shaders/pickingShader");
-	AddShader("C:/Users/ipism/source/repos/Computer_Graphics/tutorial/shaders/cubemapShader");
-	AddShader("C:/Users/ipism/source/repos/Computer_Graphics/tutorial/shaders/basicShader");
-	AddShader("C:/Users/ipism/source/repos/Computer_Graphics/tutorial/shaders/pickingShader");
+	AddShader("shaders/pickingShader");
+	AddShader("shaders/cubemapShader");
+	AddShader("shaders/basicShader");
+	AddShader("shaders/pickingShader");
 	
-	AddTexture("C:/Users/ipism/source/repos/Computer_Graphics/tutorial/textures/box0.bmp",2);
-	AddTexture("C:/Users/ipism/source/repos/Computer_Graphics/tutorial/textures/cubemaps/Daylight Box_", 3);
-	AddTexture("C:/Users/ipism/source/repos/Computer_Graphics/tutorial/textures/grass.bmp", 2);
+	AddTexture("textures/box0.bmp",2);
+	AddTexture("textures/cubemaps/Daylight Box_", 3);
+	AddTexture("textures/grass.bmp", 2);
 	//AddTexture("../res/textures/Cat_bump.jpg", 2);
 
 	AddMaterial(texIDs,slots, 1);
@@ -48,7 +48,7 @@ void Game::Init()
     AddShape(Tethrahedron, 1, LINE_LOOP);
 
 //    AddShape(Cube, -1, TRIANGLES);
-	AddShapeFromFile("C:/Users/ipism/source/repos/Computer_Graphics/tutorial/data/sphere.obj", -1, TRIANGLES);
+	AddShapeFromFile("data/sphere.obj", -1, TRIANGLES);
 	//AddShapeFromFile("../res/objs/Cat_v1.obj", -1, TRIANGLES);
 	AddShape(Plane, -2, TRIANGLES,3);
 

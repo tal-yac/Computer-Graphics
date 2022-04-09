@@ -83,8 +83,8 @@ namespace glfw
    // down = false;
   //  hack_never_moved = true;
     scroll_position = 0.0f;
-    SetShader_overlay("C:/Users/ipism/source/repos/Computer_Graphics/tutorial/shaders/overlay");
-    SetShader_point_overlay("C:/Users/ipism/source/repos/Computer_Graphics/tutorial/shaders/overlay_points");
+    SetShader_overlay("shaders/overlay");
+    SetShader_point_overlay("shaders/overlay_points");
 
     // Per face
     data()->set_face_based(false);
@@ -512,22 +512,22 @@ IGL_INLINE bool
       switch(type){
 // Axis, Plane, Cube, Octahedron, Tethrahedron, LineCopy, MeshCopy
           case Plane:
-              this->load_mesh_from_file("C:/Users/ipism/source/repos/Computer_Graphics/tutorial/data/plane.obj");
+              this->load_mesh_from_file("data/plane.obj");
               break;
           case Cube:
-              this->load_mesh_from_file("C:/Users/ipism/source/repos/Computer_Graphics/tutorial/data/cube.obj");
+              this->load_mesh_from_file("data/cube.obj");
               break;
           case Octahedron:
-              this->load_mesh_from_file("C:/Users/ipism/source/repos/Computer_Graphics/tutorial/data/octahedron.obj");
+              this->load_mesh_from_file("data/octahedron.obj");
               break;
           case Tethrahedron:
-              this->load_mesh_from_file("C:/Users/ipism/source/repos/Computer_Graphics/tutorial/data/Tetrahedron.obj");
+              this->load_mesh_from_file("data/Tetrahedron.obj");
               break;
           case Sphere:
-              this->load_mesh_from_file("C:/Users/ipism/source/repos/Computer_Graphics/tutorial/data/sphere.obj");
+              this->load_mesh_from_file("data/sphere.obj");
               break;
           case Axis:
-              this->load_mesh_from_file("C:/Users/ipism/source/repos/Computer_Graphics/tutorial/data/cube.obj");
+              this->load_mesh_from_file("data/cube.obj");
           default:
               break;
 

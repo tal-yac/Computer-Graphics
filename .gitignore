@@ -1,5 +1,9 @@
 # Directories
 build
 external
+.history
+.vs
 
 # Files
+igl\opengl\glfw\Viewer.cpp
+tutorial\Game\game.cpp
