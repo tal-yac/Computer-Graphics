@@ -49,7 +49,7 @@ vec2 complex_div(vec2 z1, vec2 z2){
 }
 
 vec2 calc_z(){
-	vec2 z = vec2((root1.x + root2.x + root3.x) / 3, (root1.y + root2.y + root3.z) / 3);
+	vec2 z = texCoord0;
     
 	int i;
 	for(i = 0; i < iteration_num; ++i)
