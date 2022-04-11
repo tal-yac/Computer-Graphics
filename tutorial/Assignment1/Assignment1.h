@@ -3,8 +3,6 @@
 
 class Assignment1 : public igl::opengl::glfw::Viewer
 {
-	static constexpr int ROOT_LENGTH = 2;
-	static constexpr int COEFFS_LENGTH = 4;
 	float time;
 	Eigen::Vector3cf FindRootsOfReduceEquation(Eigen::Vector2cf reduceCoeffs);
 	std::complex<float> Assignment1::NewtonCubicRoot(std::complex<float> num);
@@ -12,8 +10,13 @@ class Assignment1 : public igl::opengl::glfw::Viewer
 public:
 
 	Eigen::Vector4f coeffs;
+	Eigen::Vector3cf roots;
+	int chosen_coeff_index;
 	int iteration_num;
+	int xold, yold, xrel, yrel, zrel;
+	float x_translate, y_translate;
 	float x, y;
+	float zoom;
 	Assignment1();
 	//	Assignment1(float angle,float relationWH,float near, float far);
 	void Init();
@@ -21,8 +24,9 @@ public:
 	void WhenRotate();
 	void WhenTranslate();
 	void Animate() override;
+	float UpdatePosition(float xpos, float ypos);
 	void ScaleAllShapes(float amt, int viewportIndx);
-
+	void Zoom(float zrel);
 	Eigen::Vector3cf FindCubicRoots();
 
 	~Assignment1(void);

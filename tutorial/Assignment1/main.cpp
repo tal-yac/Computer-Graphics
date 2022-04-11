@@ -17,7 +17,7 @@ int main(int argc, char *argv[])
 	y.push_back(DISPLAY_HEIGHT);
 	Display disp = Display(DISPLAY_WIDTH, DISPLAY_HEIGHT, "OPENGL");
 	igl::opengl::glfw::imgui::ImGuiMenu menu;
-	Renderer rndr(CAMERA_ANGLE, (float)DISPLAY_WIDTH / (float)DISPLAY_HEIGHT / 2, NEAR, FAR);
+	Renderer rndr(CAMERA_ANGLE, (float)DISPLAY_WIDTH / (float)DISPLAY_HEIGHT, NEAR, FAR);
 	Assignment1 scn; // initializing scene
 
 	Init(disp, &menu);				// adding callback functions

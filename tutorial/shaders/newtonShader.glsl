@@ -7,35 +7,29 @@ in vec3 position0;
 
 uniform sampler2D sampler1;
 uniform vec4 coeffs;
-uniform vec2 root1;
-uniform vec2 root2;
-uniform vec2 root3;
+uniform vec4 root1;
+uniform vec4 root2;
+uniform vec4 root3;
 uniform int iteration_num;
+uniform float zoom;
+uniform vec4 translate;
 
 out vec4 Color;
 
-vec2 f(vec2 z){
-	float r = sqrt(pow(z.x, 2) + pow(z.y, 2));
-	float angle = atan(z.y, z.x);
-    float x = r * cos(angle), x_2 = pow(r, 2) * cos(2 * angle), x_3 = pow(r, 3) * cos(3 * angle);
-	float y = r * sin(angle), y_2 = pow(r, 2) * sin(2 * angle), y_3 = pow(r, 3) * sin(3 * angle);
-	float a = coeffs[0], b = coeffs[1], c = coeffs[2], d = coeffs[3];
+vec2 complex_mul(vec2 z1, vec2 z2){
+	return vec2((z1.x * z2.x) - (z1.y * z2.y), (z1.x * z2.y) + (z1.y * z2.x));
+}
 
-	return vec2((a * x_3 + b * x_2 + c * x + d), (a * y_3 + b * y_2 + c * y));	
+vec2 f(vec2 z){
+	vec2 f_calc = coeffs[0] * complex_mul(z, complex_mul(z, z)) + coeffs[1] * complex_mul(z, z) + coeffs[2] * z;
+	f_calc.x += coeffs[3];
+	return f_calc;	
 }
 
 vec2 df(vec2 z){
-	float r = sqrt(pow(z.x, 2) + pow(z.y, 2));
-	float angle = atan(z.y, z.x);
-    float x_2 = pow(r, 2) * cos(2 * angle), x_3 = pow(r, 3) * cos(3 * angle);
-	float y_2 = pow(r, 2) * sin(2 * angle), y_3 = pow(r, 3) * sin(3 * angle);
-	float a = coeffs[0], b = coeffs[1], c = coeffs[2];
-    
-	return vec2((3 * a * x_3 + 2 * b * x_2 + c), (3 * a * y_3 + 2 * b * y_2 + c));
-}
-
-vec2 complex_mul(vec2 z1, vec2 z2){
-	return vec2((z1.x * z2.x) - (z1.y * z2.y), (z1.x * z2.y) + (z1.y * z2.x));
+	vec2 df_calc = 3.0 * coeffs[0] * complex_mul(z, z) + 2.0 * coeffs[1] * z;
+	df_calc.x += coeffs[2];
+	return df_calc;    
 }
 
 vec2 complex_conjugate(vec2 z){
@@ -49,27 +43,26 @@ vec2 complex_div(vec2 z1, vec2 z2){
 }
 
 vec2 calc_z(){
-	vec2 z = texCoord0;
+	vec2 z = (texCoord0 - 0.5 + translate.xy) * zoom;
     
 	int i;
-	for(i = 0; i < iteration_num; ++i)
-		z -= complex_div(f(z), df(z));
+	for(i = 0; i < iteration_num; i++){
+		vec2 complex_div_res = complex_div(f(z), df(z));
+		z -= complex_div_res;
+		if(length(complex_div_res) < 0.00001)
+		  break;
+	}
+
 
 	return z;
-}
-
-float min3(float a, float b, float c) {
-	return (a < b && a < c) ? a : (b < c) ? b : c;
 }
 
 void main()
 {
 	vec2 final_z = calc_z();
-	float distance_1 = distance(final_z, root1), distance_2 = distance(final_z, root2), distance_3 = distance(final_z, root3);
-	float min_distance = min3(distance_1, distance_2, distance_3);
-
-	Color = (min_distance == distance_1) ? vec4(1, 0, 0, 1) :
-	        (min_distance == distance_2) ? vec4(0, 1, 0, 1) :
+	float distance_1 = distance(final_z, root1.xy), distance_2 = distance(final_z, root2.xy), distance_3 = distance(final_z, root3.xy);
+	Color = (distance_1 <= distance_2 && distance_1 <= distance_3) ? vec4(1, 0, 0, 1) :
+	        (distance_2 <= distance_3) ? vec4(0, 1, 0, 1) :
 			vec4(0, 0, 1, 1);
-	//Color = vec4(1,0,0,1);
+	// Color = vec4(0,1,0,1);
 }

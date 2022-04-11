@@ -18,6 +18,7 @@
 			if (rndr->Picking((int)x2, (int)y2))
 			{
 				rndr->UpdatePosition(x2, y2);
+				scn->UpdatePosition(x2, y2);
 				if(button == GLFW_MOUSE_BUTTON_LEFT)
 					rndr->Pressed();
 			}
@@ -38,17 +39,7 @@
 	{
 		Renderer* rndr = (Renderer*)glfwGetWindowUserPointer(window);
 		Assignment1* scn = (Assignment1*)rndr->GetScene();
-		
-		if (rndr->IsPicked())
-		{
-			rndr->UpdateZpos((int)yoffset);
-			rndr->MouseProccessing(GLFW_MOUSE_BUTTON_MIDDLE);
-		}
-		else
-		{
-			rndr->MoveCamera(0, rndr->zTranslate, (float)yoffset);
-		}
-		
+		scn->Zoom((float)yoffset);
 	}
 	
 	void glfw_cursor_position_callback(GLFWwindow* window, double xpos, double ypos)
@@ -57,22 +48,12 @@
 		Assignment1* scn = (Assignment1*)rndr->GetScene();
 
 		rndr->UpdatePosition((float)xpos,(float)ypos);
+		scn->UpdatePosition((float)xpos, (float)ypos);
 
 		if (rndr->CheckViewport(xpos,ypos, 0))
 		{
-			if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS)
-			{
-
-				rndr->MouseProccessing(GLFW_MOUSE_BUTTON_RIGHT);
-			}
-			else if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
-			{
-				
-				rndr->MouseProccessing(GLFW_MOUSE_BUTTON_LEFT);
-			}
-			else if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_RELEASE && rndr->IsPicked() && rndr->IsMany())
-					rndr->MouseProccessing(GLFW_MOUSE_BUTTON_RIGHT);
-
+			 if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
+				scn->WhenTranslate();
 		}
 	}
 
@@ -105,21 +86,25 @@
 				break;
 
 			case GLFW_KEY_UP:
-				rndr->MoveCamera(0, scn->xRotate, 0.05f);
-				
+				//rndr->MoveCamera(0, scn->xRotate, 0.05f);
+				scn->coeffs[scn->chosen_coeff_index] += 0.01;
 				break;
 			case GLFW_KEY_DOWN:
 				//scn->shapeTransformation(scn->xGlobalRotate,-5.f);
 				//cout<< "down: "<<endl;
-				rndr->MoveCamera(0, scn->xRotate, -0.05f);
+				//rndr->MoveCamera(0, scn->xRotate, -0.05f);
+				scn->coeffs[scn->chosen_coeff_index] -= 0.01;
 				break;
 			case GLFW_KEY_LEFT:
-				rndr->MoveCamera(0, scn->yRotate, 0.05f);
+				scn->iteration_num++;
+				//rndr->MoveCamera(0, scn->yRotate, 0.05f);
 				break;
 			case GLFW_KEY_RIGHT:
+				if (scn->iteration_num > 1)
+					scn->iteration_num--;
 				//scn->shapeTransformation(scn->xGlobalRotate,-5.f);
 				//cout<< "down: "<<endl;
-				rndr->MoveCamera(0, scn->yRotate, -0.05f);
+				//rndr->MoveCamera(0, scn->yRotate, -0.05f);
 				break;
 			case GLFW_KEY_U:
 				rndr->MoveCamera(0, scn->yTranslate, 0.25f);
@@ -140,6 +125,18 @@
 				break;
 			case GLFW_KEY_F:
 				rndr->MoveCamera(0, scn->zTranslate, -0.5f);
+				break;
+			case GLFW_KEY_1:
+				scn->chosen_coeff_index = 0;
+				break;
+			case GLFW_KEY_2:
+				scn->chosen_coeff_index = 1;
+				break;
+			case GLFW_KEY_3:
+				scn->chosen_coeff_index = 2;
+				break;
+			case GLFW_KEY_4:
+				scn->chosen_coeff_index = 3;
 				break;
 			default:
 				break;

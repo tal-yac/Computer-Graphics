@@ -14,9 +14,9 @@ static void printMat(const Eigen::Matrix4d &mat)
 
 Assignment1::Assignment1()
 {
-	iteration_num = 10;
+	iteration_num = 20;
 	time = 0;
-	coeffs = Eigen::Vector4f::Zero();
+	coeffs = Eigen::Vector4f(1,1,0,-1);
 }
 
 // Assignment1::Assignment1(float angle ,float relationWH, float near, float far) : Scene(angle,relationWH,near,far)
@@ -25,45 +25,27 @@ Assignment1::Assignment1()
 
 void Assignment1::Init()
 {
-	unsigned int texIDs[3] = { 0 , 1, 2 };
-	unsigned int slots[3] = { 0 , 1, 2 };
-
-	AddShader("shaders/pickingShader");
-	AddShader("shaders/newtonShader");
-
+	iteration_num = 1;
+	chosen_coeff_index = 0;
+	x_translate = 0.0f;
+	y_translate = 0.0f;
+	zoom = 1.0f;
+	AddShader("C:/Users/ipism/source/repos/Computer_Graphics/tutorial/shaders/newtonShader");
 	AddShape(Plane, -1, TRIANGLES, 0);
-	SetShapeShader(0, 1);
-	//SetShapeMaterial(0, 0);
-	pickedShape = 0;
-	//ShapeTransformation(zTranslate,-5,0);
-	pickedShape = -1;
+	SetShapeShader(0, 0);
 	SetShapeStatic(0);
-	coeffs[0] = 1;
-	coeffs[1] = 1;
-	coeffs[2] = 1;
-	coeffs[3] = 1;
-	Eigen::Vector3cf roots = FindCubicRoots();
-	// std::cout << "the roots are:\n"
-	// 		  << roots << std::endl;
-	// std::cout << "first " << coeffs[0] * roots[0] * roots[0] * roots[0] + coeffs[1] * roots[0] * roots[0] + coeffs[2] * roots[0] + coeffs[3] << std::endl;
-	// std::cout << "second " << coeffs[0] * roots[1] * roots[1] * roots[1] + coeffs[1] * roots[1] * roots[1] + coeffs[2] * roots[1] + coeffs[3] << std::endl;
-	// std::cout << "third " << coeffs[0] * roots[2] * roots[2] * roots[2] + coeffs[1] * roots[2] * roots[2] + coeffs[2] * roots[2] + coeffs[3] << std::endl;
-	// SetShapeViewport(6, 1);
-	//	ReadPixel(); //uncomment when you are reading from the z-buffer
+	roots = FindCubicRoots();
 }
 
 void Assignment1::Update(const Eigen::Matrix4f &Proj, const Eigen::Matrix4f &View, const Eigen::Matrix4f &Model, unsigned int shaderIndx, unsigned int shapeIndx)
 {
 	Shader *s = shaders[shaderIndx];
-	Eigen::Vector3cf roots = FindCubicRoots();
-	const Eigen::Vector4f c_coeffs(coeffs);
-	const Eigen::Vector4f root1(roots[0].real(), roots[0].imag(), 0, 0);
-	const Eigen::Vector4f root2(roots[1].real(), roots[1].imag(), 0, 0);
-	const Eigen::Vector4f root3(roots[2].real(), roots[2].imag(), 0, 0);
-	s->SetUniform4fv("coeffs", &c_coeffs, COEFFS_LENGTH);
-	s->SetUniform4fv("root1", &root1, ROOT_LENGTH);
-	s->SetUniform4fv("root2", &root2, ROOT_LENGTH);
-	s->SetUniform4fv("root3", &root3, ROOT_LENGTH);
+	s->SetUniform4f("coeffs", coeffs[0], coeffs[1], coeffs[2], coeffs[3]);
+	s->SetUniform4f("root1", roots[0].real(), roots[0].imag(), 0, 0);
+	s->SetUniform4f("root2", roots[1].real(), roots[1].imag(), 0, 0);
+	s->SetUniform4f("root3", roots[2].real(), roots[2].imag(), 0, 0);
+	s->SetUniform4f("translate", x_translate, y_translate, 0, 0);
+	s->SetUniform1f("zoom", zoom);
 	s->SetUniform1i("iteration_num", iteration_num);
 	s->Bind();
 	s->SetUniformMat4f("Proj", Proj);
@@ -74,7 +56,10 @@ void Assignment1::Update(const Eigen::Matrix4f &Proj, const Eigen::Matrix4f &Vie
 
 void Assignment1::WhenRotate() {}
 
-void Assignment1::WhenTranslate() {}
+void Assignment1::WhenTranslate() {
+	x_translate -= xrel / 200.0f;
+	y_translate += yrel / 200.0f;
+}
 
 void Assignment1::Animate()
 {
@@ -93,6 +78,11 @@ void Assignment1::ScaleAllShapes(float amt, int viewportIndx)
 			data_list[i]->MyScale(Eigen::Vector3d(amt, amt, amt));
 		}
 	}
+}
+
+void Assignment1::Zoom(float zrel)
+{
+	zoom /= 1 - zrel * 0.01;
 }
 
 Eigen::Vector3cf Assignment1::FindCubicRoots()
@@ -155,6 +145,15 @@ Eigen::Vector3cf Assignment1::FindRootsOfReduceEquation(Eigen::Vector2cf reduceC
 	roots[1] = p * std::complex<float>(std::cosf(2.0f * 3.14159f / 3.0f), std::sinf(2 * 3.14159f / 3.0f)) - n * std::complex<float>(std::cosf(1.0f * 3.14159f / 3.0f), std::sinf(1 * 3.14159f / 3.0f));
 	roots[2] = -p * std::complex<float>(std::cosf(1.0f * 3.14159f / 3.0f), std::sinf(1 * 3.14159f / 3.0f)) + n * std::complex<float>(std::cosf(2.0f * 3.14159f / 3.0f), std::sinf(2 * 3.14159f / 3.0f));
 	return roots;
+}
+
+float Assignment1::UpdatePosition(float xpos, float ypos)
+{
+	xrel = xold - xpos;
+	yrel = yold - ypos;
+	xold = xpos;
+	yold = ypos;
+	return yrel;
 }
 
 Assignment1::~Assignment1(void) {}
