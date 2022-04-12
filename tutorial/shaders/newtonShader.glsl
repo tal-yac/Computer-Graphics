@@ -42,27 +42,27 @@ vec2 complex_div(vec2 z1, vec2 z2){
 	return nominator / denominator;
 }
 
-vec2 calc_z(){
-	vec2 z = (texCoord0 - 0.5 + translate.xy) * zoom;
-    
+vec3 calc_z_and_iters(){
+	vec2 z = (position0.xy - vec2(0.1, 0.05) + translate.xy) * zoom;
+    float epsilon = 0.00001;
 	int i;
 	for(i = 0; i < iteration_num; i++){
 		vec2 complex_div_res = complex_div(f(z), df(z));
 		z -= complex_div_res;
-		if(length(complex_div_res) < 0.00001)
+		if(length(complex_div_res) < epsilon)
 		  break;
 	}
 
-
-	return z;
+	return vec3(z, i);
 }
 
 void main()
 {
-	vec2 final_z = calc_z();
+	vec3 z_and_iters = calc_z_and_iters();
+	vec2 final_z = z_and_iters.xy;
+	float intensity = clamp((iteration_num - z_and_iters.z) / iteration_num, 0.3, 1);
 	float distance_1 = distance(final_z, root1.xy), distance_2 = distance(final_z, root2.xy), distance_3 = distance(final_z, root3.xy);
-	Color = (distance_1 <= distance_2 && distance_1 <= distance_3) ? vec4(1, 0, 0, 1) :
+	Color = intensity * ((distance_1 <= distance_2 && distance_1 <= distance_3) ? vec4(1, 0, 0, 1) :
 	        (distance_2 <= distance_3) ? vec4(0, 1, 0, 1) :
-			vec4(0, 0, 1, 1);
-	// Color = vec4(0,1,0,1);
+			vec4(0, 0, 1, 1));
 }

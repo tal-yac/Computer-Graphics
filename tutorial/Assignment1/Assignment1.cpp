@@ -16,7 +16,7 @@ Assignment1::Assignment1()
 {
 	iteration_num = 20;
 	time = 0;
-	coeffs = Eigen::Vector4f(1,1,0,-1);
+	coeffs = Eigen::Vector4f(3.24, 0.44, 0.02, -1.05);
 }
 
 // Assignment1::Assignment1(float angle ,float relationWH, float near, float far) : Scene(angle,relationWH,near,far)
