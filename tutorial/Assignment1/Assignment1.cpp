@@ -16,7 +16,7 @@ Assignment1::Assignment1()
 {
 	iteration_num = 20;
 	time = 0;
-	coeffs = Eigen::Vector4f(3.24, 0.44, 0.02, -1.05);
+	coeffs = Eigen::Vector4f(1.0, 0.0, 0.0, -1.0); //Eigen::Vector4f(3.24, 0.44, 0.02, -1.05);
 }
 
 // Assignment1::Assignment1(float angle ,float relationWH, float near, float far) : Scene(angle,relationWH,near,far)
@@ -25,12 +25,11 @@ Assignment1::Assignment1()
 
 void Assignment1::Init()
 {
-	iteration_num = 1;
 	chosen_coeff_index = 0;
 	x_translate = 0.0f;
 	y_translate = 0.0f;
-	zoom = 1.0f;
-	AddShader("C:/Users/ipism/source/repos/Computer_Graphics/tutorial/shaders/newtonShader");
+	zoom = 2.69006f;
+	AddShader("shaders/newtonShader");
 	AddShape(Plane, -1, TRIANGLES, 0);
 	SetShapeShader(0, 0);
 	SetShapeStatic(0);
@@ -83,6 +82,7 @@ void Assignment1::ScaleAllShapes(float amt, int viewportIndx)
 void Assignment1::Zoom(float zrel)
 {
 	zoom /= 1 - zrel * 0.01;
+	std::cout << "pixel width: " << zoom / 900.0f << std::endl; 
 }
 
 Eigen::Vector3cf Assignment1::FindCubicRoots()
