@@ -56,8 +56,8 @@ void Assignment1::Update(const Eigen::Matrix4f &Proj, const Eigen::Matrix4f &Vie
 void Assignment1::WhenRotate() {}
 
 void Assignment1::WhenTranslate() {
-	x_translate -= xrel / 200.0f;
-	y_translate += yrel / 200.0f;
+	x_translate += xrel / 200.0f;
+	y_translate -= yrel / 200.0f;
 }
 
 void Assignment1::Animate()
@@ -81,7 +81,7 @@ void Assignment1::ScaleAllShapes(float amt, int viewportIndx)
 
 void Assignment1::Zoom(float zrel)
 {
-	zoom /= 1 - zrel * 0.01;
+	zoom /= 1 + zrel * 0.01;
 	std::cout << "pixel width: " << zoom / 900.0f << std::endl; 
 }
 
