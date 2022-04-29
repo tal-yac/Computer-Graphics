@@ -512,22 +512,22 @@ IGL_INLINE bool
       switch(type){
 // Axis, Plane, Cube, Octahedron, Tethrahedron, LineCopy, MeshCopy
           case Plane:
-              this->load_mesh_from_file("data/plane.obj");
+              this->load_mesh_from_file("./data/plane.obj");
               break;
           case Cube:
-              this->load_mesh_from_file("data/cube.obj");
+              this->load_mesh_from_file("./data/cube.obj");
               break;
           case Octahedron:
-              this->load_mesh_from_file("data/octahedron.obj");
+              this->load_mesh_from_file("./data/octahedron.obj");
               break;
           case Tethrahedron:
-              this->load_mesh_from_file("data/Tetrahedron.obj");
+              this->load_mesh_from_file("./data/Tetrahedron.obj");
               break;
           case Sphere:
-              this->load_mesh_from_file("data/sphere.obj");
+              this->load_mesh_from_file("./data/sphere.obj");
               break;
           case Axis:
-              this->load_mesh_from_file("data/cube.obj");
+              this->load_mesh_from_file("./data/cube.obj");
           default:
               break;
 
@@ -798,22 +798,16 @@ IGL_INLINE bool
     {
         textures.push_back(new Texture(width, height));
 
-        switch (mode)
+        if (mode)
         {
-            case COLOR:
-                glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data); //note GL_RED internal format, to save memory.
-                break;
-            case DEPTH:
-                glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT32, width, height, 0, GL_DEPTH_COMPONENT, GL_FLOAT, data);
-                break;
-            case STENCIL:
-                glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH24_STENCIL8, width, height, 0, GL_DEPTH_STENCIL, GL_UNSIGNED_INT_24_8, data);
-                break;
-            default:
-                glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data); //note GL_RED internal format, to save memory.
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH24_STENCIL8, width, height, 0, GL_DEPTH_STENCIL, GL_UNSIGNED_INT_24_8, data);
+        }
+        else
+        {
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data); //note GL_RED internal format, to save memory.
         }
         glBindTexture(GL_TEXTURE_2D, 0);
-        return(textures.size() - 1);
+        return(textures.size() -1);
     }
 
     void Viewer::Update_overlay(const Eigen::Matrix4f &Proj, const Eigen::Matrix4f &View, const Eigen::Matrix4f &Model, unsigned int shapeIndx,bool is_points) {
