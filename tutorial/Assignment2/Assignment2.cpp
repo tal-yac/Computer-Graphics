@@ -76,10 +76,10 @@ void Assignment2::Update(const Eigen::Matrix4f& Proj, const Eigen::Matrix4f& Vie
 	s->SetUniform4fv("eye",&scnData.eye,1);
 	s->SetUniform4fv("ambient", &scnData.ambient, 1);
 	s->SetUniform4fv("objects",&scnData.objects[0], scnData.objects.size());
-	s->SetUniform4fv("objColors", &scnData.colors[0], scnData.colors.size());
-	s->SetUniform4fv("lightsPosition", &scnData.lights[0], scnData.lights.size());
-	s->SetUniform4fv("lightsDirection", &scnData.directions[0], scnData.directions.size());
-	s->SetUniform4fv("lightsIntensity", &scnData.intensities[0], scnData.intensities.size());
+	s->SetUniform4fv("object_colors", &scnData.colors[0], scnData.colors.size());
+	s->SetUniform4fv("lights_position", &scnData.lights[0], scnData.lights.size());
+	s->SetUniform4fv("lights_direction", &scnData.directions[0], scnData.directions.size());
+	s->SetUniform4fv("lights_intensity", &scnData.intensities[0], scnData.intensities.size());
 	
 	s->SetUniform4i("sizes", scnData.sizes[0], scnData.sizes[1], scnData.sizes[2], scnData.sizes[3]);
 	if (data_list[shapeIndx]->GetMaterial() >= 0 && !materials.empty())
