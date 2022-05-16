@@ -153,6 +153,9 @@
 			case GLFW_KEY_F:
 				rndr->MoveCamera(0, scn->zTranslate, -0.5f);
 				break;
+			case GLFW_KEY_P:
+				std::cout << scn->scnData.eye[2] << std::endl;
+					break;
 			default:
 				break;
 

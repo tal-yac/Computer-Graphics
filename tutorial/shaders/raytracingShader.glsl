@@ -21,7 +21,7 @@ bool is_plane(vec4 o) { return (o.w <= 0); }
 bool is_directional(vec4 o) { return (o.w < 0.5); }
 
 float intersection(inout int source_index, vec3 p0, vec3 v) {
-  float tmin = 1.0 / 0.0;
+  float tmin = 999999999;
   int index = -1;
   for (int i = 0; i < objects_size(); ++i) {
     if (i == source_index)
@@ -145,6 +145,15 @@ vec3 color_calc(int source_index, vec3 p0, vec3 u, float diffuse_factor) {
   return min(color, vec3(1.0, 1.0, 1.0));
 }
 
+vec3 snell_refract(vec3 l, vec3 n, float refractive_index_i, float refractive_index_r){
+    float ln_dot_prod = dot(l, n);
+    float cos_theta_i = ln_dot_prod / (length(l) * length(n));
+    float theta_i = acos(cos_theta_i);
+    float theta_r = asin((refractive_index_i * sin(theta_i)) / refractive_index_r);
+    vec3 t = (((refractive_index_i / refractive_index_r) * cos_theta_i - cos(theta_r)) * n) - (refractive_index_i / refractive_index_r) * l;
+    return t;
+}
+
 void main() {
   vec3 eye_diff = eye.xyw;
   vec3 v = normalize(position0 + eye_diff - eye.xyz);
@@ -157,14 +166,18 @@ void main() {
   // v= normalize( position0 - eye.xyz);
   // mirror
   int steps;
-  vec3 n, p;
+  vec3 n, p, refract_t;
+  float refractive_index_i = 1.0, refractive_index_r = 1.5;
+
   for (p = position0 + eye_diff + t * v, steps = 5;
        steps > 0 && index < sizes.z; steps--) {
     n = (is_sphere(objects[index])) ? normalize(p - objects[index].xyz)
                                     : normalize(objects[index].xyz);
+    if(is_sphere[objects[index]])
+        refract_t = snell_refract(v, n, refractive_index_i, refractive_index_r);
     v = normalize(reflect(v, n));
     t = intersection(index, p, v);
-    p += t * v
+    p += t * v;
   }
   float x = p.x; // max(abs(p.x),abs(p.y))*sign(p.x+p.y);
   float y =
