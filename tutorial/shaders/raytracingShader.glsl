@@ -146,11 +146,12 @@ vec3 color_calc(int source_index, vec3 p0, vec3 u, float diffuse_factor) {
 }
 
 vec3 snell_refract(vec3 l, vec3 n, float refractive_index_i, float refractive_index_r){
+    float ref_ir = refractive_index_i / refractive_index_r;
     float ln_dot_prod = dot(l, n);
     float cos_theta_i = ln_dot_prod / (length(l) * length(n));
     float theta_i = acos(cos_theta_i);
     float theta_r = asin((refractive_index_i * sin(theta_i)) / refractive_index_r);
-    vec3 t = (((refractive_index_i / refractive_index_r) * cos_theta_i - cos(theta_r)) * n) - (refractive_index_i / refractive_index_r) * l;
+    vec3 t = ((ref_ir * cos_theta_i - cos(theta_r)) * n) - ref_ir * l;
     return t;
 }
 
@@ -166,18 +167,24 @@ void main() {
   // v= normalize( position0 - eye.xyz);
   // mirror
   int steps;
-  vec3 n, p, refract_t;
+  vec3 n, p = position0 + eye_diff + t * v;
   float refractive_index_i = 1.0, refractive_index_r = 1.5;
 
-  for (p = position0 + eye_diff + t * v, steps = 5;
-       steps > 0 && index < sizes.z; steps--) {
-    n = (is_sphere(objects[index])) ? normalize(p - objects[index].xyz)
-                                    : normalize(objects[index].xyz);
-    if(is_sphere[objects[index]])
-        refract_t = snell_refract(v, n, refractive_index_i, refractive_index_r);
-    v = normalize(reflect(v, n));
-    t = intersection(index, p, v);
-    p += t * v;
+  for (steps = 5; steps > 0; --steps) {
+    if(index < sizes.z || index < sizes.w){
+      n = (is_sphere(objects[index])) ? normalize(p - objects[index].xyz)
+                                      : normalize(objects[index].xyz);
+      v = (index < sizes.w) ? snell_refract(v, n, refractive_index_i, refractive_index_r) : normalize(reflect(v, n));
+      t = intersection(index, p, v);
+      p += t * v;
+
+      if (index < sizes.w)
+        if(steps % 2 == 0)
+            n *= -1;
+      float tmp = refractive_index_i;
+      refractive_index_i = refractive_index_r;
+      refractive_index_r = tmp;
+    }
   }
   float x = p.x; // max(abs(p.x),abs(p.y))*sign(p.x+p.y);
   float y =
