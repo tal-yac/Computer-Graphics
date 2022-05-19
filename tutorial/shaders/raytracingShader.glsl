@@ -20,6 +20,16 @@ bool is_plane(vec4 o) { return (o.w <= 0); }
 
 bool is_directional(vec4 o) { return (o.w < 0.5); }
 
+float _pow(float b, float e) {
+  return (b < 0 && int(e) % 2 == 1) ? -pow(-b, e) : pow(abs(b), e);
+}
+
+void swap(inout float x, inout float y) {
+  float tmp = x;
+  x = y;
+  y = tmp;
+}
+
 float intersection(inout int source_index, vec3 p0, vec3 v) {
   float tmin = 999999999;
   int index = -1;
@@ -50,6 +60,16 @@ float intersection(inout int source_index, vec3 p0, vec3 v) {
   return tmin;
 }
 
+vec3 snell_refract(vec3 l, vec3 n, inout float refractive_index_i, inout float refractive_index_r){
+    float ln_dot_prod = clamp(dot(l, n), -1, 1);
+    float ref_ir = refractive_index_i / refractive_index_r;
+    float cos_theta_i = ln_dot_prod / (length(l) * length(n));
+    float theta_i = acos(cos_theta_i);
+    float theta_r = asin((refractive_index_i * sin(theta_i)) / refractive_index_r);
+    vec3 t = ((ref_ir * cos_theta_i - cos(theta_r)) * n) - ref_ir * l;
+    return t;
+}
+
 // body index in objects, point on surface of object, diffuse_factor for plane
 // squares
 vec3 color_calc(int source_index, vec3 p0, vec3 u, float diffuse_factor) {
@@ -71,7 +91,7 @@ vec3 color_calc(int source_index, vec3 p0, vec3 u, float diffuse_factor) {
           vec3 refl = normalize(reflect(v, n));
           if (dot(v, n) > 0.0)
             color += max(specular_coeff * lights_intensity[i].rgb *
-                             pow(dot(refl, u), object_colors[source_index].a),
+                             _pow(dot(refl, u), object_colors[source_index].a),
                          vec3(0.0, 0.0, 0.0)); // specular
           color += max(diffuse_factor * lights_intensity[i].rgb *
                            object_colors[source_index].rgb * dot(v, n),
@@ -82,7 +102,7 @@ vec3 color_calc(int source_index, vec3 p0, vec3 u, float diffuse_factor) {
           vec3 refl = normalize(reflect(v, n));
           color = min(
               color + max(specular_coeff * lights_intensity[i].rgb *
-                              pow(dot(refl, u), object_colors[source_index].a),
+                              _pow(dot(refl, u), object_colors[source_index].a),
                           vec3(0.0, 0.0, 0.0)),
               vec3(1.0, 1.0, 1.0)); // specular
           color =
@@ -113,7 +133,7 @@ vec3 color_calc(int source_index, vec3 p0, vec3 u, float diffuse_factor) {
             vec3 refl = normalize(reflect(v, n));
             if (dot(v, n) > 0.0)
               color += max(specular_coeff * lights_intensity[i].rgb *
-                               pow(dot(refl, u), object_colors[source_index].a),
+                               _pow(dot(refl, u), object_colors[source_index].a),
                            vec3(0.0, 0.0, 0.0)); // specular
             color += max(diffuse_factor * lights_intensity[i].rgb *
                              object_colors[source_index].rgb * dot(v, n),
@@ -124,7 +144,7 @@ vec3 color_calc(int source_index, vec3 p0, vec3 u, float diffuse_factor) {
             vec3 n = normalize(objects[source_index].xyz);
             vec3 refl = normalize(reflect(v, n)); // specular
             color = min(color + max(specular_coeff * lights_intensity[i].rgb *
-                                        pow(dot(refl, u),
+                                        _pow(dot(refl, u),
                                             object_colors[source_index].a),
                                     vec3(0.0, 0.0, 0.0)),
                         vec3(1.0, 1.0, 1.0));
@@ -145,16 +165,6 @@ vec3 color_calc(int source_index, vec3 p0, vec3 u, float diffuse_factor) {
   return min(color, vec3(1.0, 1.0, 1.0));
 }
 
-vec3 snell_refract(vec3 l, vec3 n, float refractive_index_i, float refractive_index_r){
-    float ref_ir = refractive_index_i / refractive_index_r;
-    float ln_dot_prod = dot(l, n);
-    float cos_theta_i = ln_dot_prod / (length(l) * length(n));
-    float theta_i = acos(cos_theta_i);
-    float theta_r = asin((refractive_index_i * sin(theta_i)) / refractive_index_r);
-    vec3 t = ((ref_ir * cos_theta_i - cos(theta_r)) * n) - ref_ir * l;
-    return t;
-}
-
 void main() {
   vec3 eye_diff = eye.xyw;
   vec3 v = normalize(position0 + eye_diff - eye.xyz);
@@ -169,21 +179,22 @@ void main() {
   int steps;
   vec3 n, p = position0 + eye_diff + t * v;
   float refractive_index_i = 1.0, refractive_index_r = 1.5;
+  bool negate = false;
 
   for (steps = 5; steps > 0; --steps) {
     if(index < sizes.z || index < sizes.w){
       n = (is_sphere(objects[index])) ? normalize(p - objects[index].xyz)
                                       : normalize(objects[index].xyz);
-      v = (index < sizes.w) ? snell_refract(v, n, refractive_index_i, refractive_index_r) : normalize(reflect(v, n));
+      if (index < sizes.w && negate) {
+        n *= -1;
+        negate = !negate;
+      }
+      v = (index < sizes.w)
+          ? normalize(refract(v, n, refractive_index_i / refractive_index_r))
+          : normalize(reflect(v, n));
       t = intersection(index, p, v);
       p += t * v;
-
-      if (index < sizes.w)
-        if(steps % 2 == 0)
-            n *= -1;
-      float tmp = refractive_index_i;
-      refractive_index_i = refractive_index_r;
-      refractive_index_r = tmp;
+      swap(refractive_index_i, refractive_index_r);
     }
   }
   float x = p.x; // max(abs(p.x),abs(p.y))*sign(p.x+p.y);
