@@ -1,5 +1,6 @@
 #include "Assignment2.h"
 #include <iostream>
+#define M_PI 3.14159265358979323846
 
 
 static void printMat(const Eigen::Matrix4d& mat)
@@ -15,7 +16,7 @@ static void printMat(const Eigen::Matrix4d& mat)
 
 Assignment2::Assignment2()
 {
-	SceneParser("data/scenes/scene_t.txt",&scnData);
+	SceneParser("data/scenes/scene1.txt", &scnData);
 	xResolution = 800;
 	yResolution = 800;
 	//x = 0.5f;
@@ -24,8 +25,20 @@ Assignment2::Assignment2()
 	isRightPressed = false;
 	isPressed = false;
 	time = 0;
-}
+	camera_center = (Eigen::Vector4f::Zero() - scnData.eye).head(3).normalized() + scnData.eye.head(3);
 
+	float x = (scnData.eye[0] - camera_center[0]);
+	float y = (scnData.eye[1] - camera_center[1]);
+	float z = (scnData.eye[2] - camera_center[2]);
+
+	angle_theta = acos(y);
+	angle_phi = atan(x / z);
+
+	scnData.eye << sinf(angle_phi) * sinf(angle_theta) + camera_center[0],
+		           cosf(angle_theta) + camera_center[1],
+		           cosf(angle_phi)* sinf(angle_theta) + camera_center[2],
+		           0;
+}
 //Assignment2::Assignment2(float angle ,float relationWH, float near, float far) : Scene(angle,relationWH,near,far)
 //{ 	
 //}
@@ -58,6 +71,22 @@ void Assignment2::Init()
 
 void Assignment2::Update(const Eigen::Matrix4f& Proj, const Eigen::Matrix4f& View, const Eigen::Matrix4f& Model, unsigned int  shaderIndx, unsigned int shapeIndx)
 {
+
+	camera_forward = camera_center - scnData.eye.head(3);
+	camera_forward.normalize();
+
+	camera_center = scnData.eye.head(3) + camera_forward;
+	camera_up = ((angle_theta > 0 && angle_theta < M_PI) || (angle_theta < -M_PI && angle_theta > -2 * M_PI)) ? Eigen::Vector3f(0, 1, 0) : 
+																												Eigen::Vector3f(0, -1, 0);
+
+	camera_right = camera_forward.cross(camera_up);
+	camera_up = camera_right.cross(camera_forward);
+
+	view_matrix.col(0) << camera_right, 0;
+	view_matrix.col(1) << camera_up, 0;
+	view_matrix.col(2) << camera_forward, 0;
+	view_matrix.col(3) << camera_center, 1;
+
 	Shader *s = shaders[shaderIndx];
 	int r = ((shapeIndx+1) & 0x000000FF) >>  0;
 	int g = ((shapeIndx+1) & 0x0000FF00) >>  8;
@@ -68,7 +97,7 @@ void Assignment2::Update(const Eigen::Matrix4f& Proj, const Eigen::Matrix4f& Vie
 	//s->SetUniform1f("x",x);
 	//s->SetUniform1f("y",y);
 	
-	
+	s->SetUniformMat4f("view_matrix", view_matrix);
 	s->SetUniformMat4f("Proj", Proj);
 	s->SetUniformMat4f("View", View);
 	s->SetUniformMat4f("Model", Model);
