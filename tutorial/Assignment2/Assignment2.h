@@ -9,8 +9,10 @@ class Assignment2 : public igl::opengl::glfw::Viewer
 	bool isRightPressed;
 	int sourceIndx;
 public:
-
+	Eigen::Vector3f camera_forward, camera_up, camera_right, camera_center;
+	Eigen::Matrix4f view_matrix;
 	float time;
+	float angle_theta, angle_phi;
 	Assignment2();
 	SceneData scnData;
 //	Assignment2(float angle,float relationWH,float near, float far);

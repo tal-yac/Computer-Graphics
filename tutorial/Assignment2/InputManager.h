@@ -4,6 +4,7 @@
 #include "Assignment2.h"
 #include "imgui/imgui.h"
 
+#define M_PI 3.14159265358979323846
 
 	void glfw_mouse_callback(GLFWwindow* window,int button, int action, int mods)
 	{	
@@ -49,6 +50,7 @@
 		Renderer* rndr = (Renderer*)glfwGetWindowUserPointer(window);
 		Assignment2* scn = (Assignment2*)rndr->GetScene();
 		scn->scnData.eye[2] += ((float)yoffset * 0.2);
+
 		/*if (rndr->IsPicked())
 		{
 			rndr->UpdateZpos((int)yoffset);
@@ -58,7 +60,6 @@
 		{
 			rndr->MoveCamera(0, rndr->zTranslate, (float)yoffset);
 		}*/
-		
 	}
 	
 	void glfw_cursor_position_callback(GLFWwindow* window, double xpos, double ypos)
@@ -118,20 +119,36 @@
 
 			case GLFW_KEY_UP:
 				//rndr->MoveCamera(0, scn->xRotate, 0.05f);
-				scn->RotateEye(0.05f, true);
+				//scn->RotateEye(0.05f, true);
+				scn->angle_theta += M_PI / 10;
+				if (scn->angle_theta >= 2 * M_PI)
+					scn->angle_theta -= 2 * M_PI;
+				scn->scnData.eye << sin(scn->angle_phi) * sin(scn->angle_theta), cos(scn->angle_theta), cos(scn->angle_phi)* sin(scn->angle_theta), 0;
 				break;
 			case GLFW_KEY_DOWN:
 				//scn->shapeTransformation(scn->xGlobalRotate,-5.f);
 				//cout<< "down: "<<endl;
-				scn->RotateEye(-0.05f, true);
+				//scn->RotateEye(-0.05f, true);
+				scn->angle_theta -= M_PI / 10;
+				if (scn->angle_theta < -2 * M_PI)
+					scn->angle_theta += 2 * M_PI;
+				scn->scnData.eye << sin(scn->angle_phi) * sin(scn->angle_theta), cos(scn->angle_theta), cos(scn->angle_phi)* sin(scn->angle_theta), 0;
 				break;
 			case GLFW_KEY_LEFT:
-				scn->RotateEye(0.05f, false);
+				//scn->RotateEye(0.05f, false);
+				scn->angle_phi += M_PI / 10;
+				if (scn->angle_phi >= 2 * M_PI)
+					scn->angle_phi -= 2 * M_PI;
+				scn->scnData.eye << sin(scn->angle_phi) * sin(scn->angle_theta), cos(scn->angle_theta), cos(scn->angle_phi)* sin(scn->angle_theta), 0;
 				break;
 			case GLFW_KEY_RIGHT:
 				//scn->shapeTransformation(scn->xGlobalRotate,-5.f);
 				//cout<< "down: "<<endl;
-				scn->RotateEye(-0.05f, false);
+				//scn->RotateEye(-0.05f, false);
+				scn->angle_phi -= M_PI / 10;
+				if (scn->angle_phi < -2 * M_PI)
+					scn->angle_phi += 2 * M_PI;
+				scn->scnData.eye << sin(scn->angle_phi) * sin(scn->angle_theta), cos(scn->angle_theta), cos(scn->angle_phi)* sin(scn->angle_theta), 0;
 				break;
 			case GLFW_KEY_U:
 				rndr->MoveCamera(0, scn->yTranslate, 0.25f);
@@ -154,7 +171,8 @@
 				rndr->MoveCamera(0, scn->zTranslate, -0.5f);
 				break;
 			case GLFW_KEY_P:
-				std::cout << scn->scnData.eye[2] << std::endl;
+				std::cout << scn->angle_phi << " PHI " << std::endl;
+				std::cout << scn->angle_theta << " THETA " << std::endl;
 					break;
 			default:
 				break;
