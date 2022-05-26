@@ -16,9 +16,9 @@ static void printMat(const Eigen::Matrix4d &mat) {
 }
 
 Assignment3::Assignment3() {
-  cubeSize = 3; // maximum of six because code support up to 255 cubes in total
-  animSpeed = 1;
-  currFrame = 0;
+  cube_size = 3; // maximum of six because code support up to 255 cubes in total
+  anim_speed = 1;
+  curr_frame = 0;
   rotate_clockwise = true;
 }
 
@@ -35,12 +35,12 @@ void Assignment3::Init() {
 
   AddCubeTexture();
 
-  float center = (cubeSize - 1.0f) / 2.0f;
-  for (int i = 0; i < cubeSize; i++) {
-    for (int j = 0; j < cubeSize; j++) {
-      for (int k = 0; k < cubeSize; k++) {
+  float center = (cube_size - 1.0f) / 2.0f;
+  for (int i = 0; i < cube_size; i++) {
+    for (int j = 0; j < cube_size; j++) {
+      for (int k = 0; k < cube_size; k++) {
         AddShape(Cube, -1, TRIANGLES);
-        pickedShape = i * cubeSize * cubeSize + j * cubeSize + k;
+        pickedShape = i * cube_size * cube_size + j * cube_size + k;
         ShapeTransformation(xTranslate, 1 * (k - center), 0);
         ShapeTransformation(yTranslate, 1 * (j - center), 0);
         ShapeTransformation(zTranslate, 1 * (i - center), 0);
@@ -131,35 +131,35 @@ void Assignment3::ScaleAllShapes(float amt, int viewportIndx) {
 void Assignment3::toggleRotationDir() { rotate_clockwise = !rotate_clockwise; }
 
 void Assignment3::UpdateAnimationSpeed(int change) {
-  animSpeed += change;
-  if (animSpeed < 1)
-    animSpeed = 1;
-  else if (animSpeed > MAX_ANIMATIONS)
-    animSpeed = MAX_ANIMATIONS;
-  std::cout << "animationSpeed " << animSpeed << std::endl;
+  anim_speed += change;
+  if (anim_speed < 1)
+    anim_speed = 1;
+  else if (anim_speed > MAX_ANIMATIONS)
+    anim_speed = MAX_ANIMATIONS;
+  std::cout << "animationSpeed " << anim_speed << std::endl;
 }
 
-std::vector<int> getFaceIndexes(int cubeSize, int direction, int faceIndex) {
+std::vector<int> getFaceIndexes(int cube_size, int direction, int faceIndex) {
   std::vector<int> indexs;
   switch (direction) {
   case 0: // col
-    for (int i = 0; i < cubeSize * cubeSize; i++) {
-      indexs.push_back(cubeSize * i + faceIndex);
+    for (int i = 0; i < cube_size * cube_size; i++) {
+      indexs.push_back(cube_size * i + faceIndex);
     }
     break;
   case 1: // row
-    for (int j = cubeSize - 1; j >= 0; j--) {
-      for (int i = cubeSize - 1; i >= 0; i--) {
-        int index = i * cubeSize * cubeSize + faceIndex * cubeSize;
+    for (int j = cube_size - 1; j >= 0; j--) {
+      for (int i = cube_size - 1; i >= 0; i--) {
+        int index = i * cube_size * cube_size + faceIndex * cube_size;
         indexs.push_back(index + j);
       }
     }
     break;
   case 2: // the 3rd options
-    for (int j = cubeSize - 1; j >= 0; j--) {
-      for (int i = cubeSize - 1; i >= 0; i--) {
-        int index = faceIndex * cubeSize * cubeSize;
-        indexs.push_back(index + i * cubeSize + j);
+    for (int j = cube_size - 1; j >= 0; j--) {
+      for (int i = cube_size - 1; i >= 0; i--) {
+        int index = faceIndex * cube_size * cube_size;
+        indexs.push_back(index + i * cube_size + j);
       }
     }
     break;
@@ -169,18 +169,18 @@ std::vector<int> getFaceIndexes(int cubeSize, int direction, int faceIndex) {
   return indexs;
 }
 
-std::vector<int> rotatedFaceIndexes(int cubeSize, bool clockwise) {
+std::vector<int> rotatedFaceIndexes(int cube_size, bool clockwise) {
   std::vector<int> newPositions;
   if (clockwise) {
-    for (int i = 0; i < cubeSize; i++) {        // col
-      for (int j = cubeSize - 1; j >= 0; j--) { // row
-        newPositions.push_back(j * cubeSize + i);
+    for (int i = 0; i < cube_size; i++) {        // col
+      for (int j = cube_size - 1; j >= 0; j--) { // row
+        newPositions.push_back(j * cube_size + i);
       }
     }
   } else {
-    for (int j = cubeSize - 1; j >= 0; j--) { // row
-      for (int i = 0; i < cubeSize; i++) {    // col
-        newPositions.push_back(i * cubeSize + j);
+    for (int j = cube_size - 1; j >= 0; j--) { // row
+      for (int i = 0; i < cube_size; i++) {    // col
+        newPositions.push_back(i * cube_size + j);
       }
     }
   }
@@ -189,32 +189,32 @@ std::vector<int> rotatedFaceIndexes(int cubeSize, bool clockwise) {
 
 void Assignment3::addRotation(int faceDirection, int faceIndex) {
   std::vector<int> pointers =
-      getFaceIndexes(cubeSize, faceDirection, faceIndex);
+      getFaceIndexes(cube_size, faceDirection, faceIndex);
   std::vector<int> positions = rotatedFaceIndexes(
-      cubeSize, faceDirection == 2 ? rotate_clockwise : !rotate_clockwise);
+      cube_size, faceDirection == 2 ? rotate_clockwise : !rotate_clockwise);
   std::vector<int> values;
-  for (int i = 0; i < cubeSize * cubeSize; i++) {
+  for (int i = 0; i < cube_size * cube_size; i++) {
     values.push_back(cubesIndexs[pointers[i]]);
   }
-  for (int i = 0; i < cubeSize * cubeSize; i++) {
+  for (int i = 0; i < cube_size * cube_size; i++) {
     cubesIndexs[pointers[i]] = values[positions[i]];
   }
 
   Operation operation;
   operation.type = faceDirection;
   operation.indices = values;
-  // printCube(cubeSize, cubesIndexs);
+  // printCube(cube_size, cubesIndexs);
   operations.push(operation);
 }
 
 void Assignment3::AddOperation(int operation) {
   if (operation < 6) {
-    addRotation(operation / 2, (operation % 2) * (cubeSize - 1));
+    addRotation(operation / 2, (operation % 2) * (cube_size - 1));
   } // rotation
   else if (operation >= 10) {
-    if (cubeSize > 3) {
+    if (cube_size > 3) {
       operation -= 10;
-      addRotation(operation / 2, (operation % 2) ? (cubeSize - 2) : 1);
+      addRotation(operation / 2, (operation % 2) ? (cube_size - 2) : 1);
     } else
       std::cout << "operation is not premitted in cubes sized less then 3"
                 << std::endl;
@@ -239,16 +239,16 @@ void Assignment3::ReadOperation() {
 }
 
 void Assignment3::rotateWall(int type, std::vector<int> indexs) {
-  currFrame += animSpeed;
+  curr_frame += anim_speed;
   float amount = (rotate_clockwise) ? -1.0f : 1.0f;
-  if (currFrame >= TOTAL_FRAMES) {
-    amount *= (TOTAL_FRAMES + animSpeed - currFrame);
+  if (curr_frame >= TOTAL_FRAMES) {
+    amount *= (TOTAL_FRAMES + anim_speed - curr_frame);
     operations.pop();
-    currFrame = 0;
+    curr_frame = 0;
   } else
-    amount *= animSpeed;
+    amount *= anim_speed;
 
-  for (int i = 0; i < cubeSize * cubeSize; i++) {
+  for (int i = 0; i < cube_size * cube_size; i++) {
     pickedShape = indexs[i];
     switch (type) {
     case 0:
@@ -271,10 +271,10 @@ void Assignment3::WhenPicked() {
   if (itr != cubesIndexs.cend()) {
     int cubeIndex = std::distance(cubesIndexs.begin(), itr);
     std::cout << pickedShape << " present at index " << cubeIndex << std::endl;
-    int faceIndex = cubeIndex / (cubeSize * cubeSize);
-    cubeIndex -= faceIndex * cubeSize * cubeSize;
-    int rowIndex = cubeIndex / cubeSize;
-    int colIndex = cubeIndex - rowIndex * cubeSize;
+    int faceIndex = cubeIndex / (cube_size * cube_size);
+    cubeIndex -= faceIndex * cube_size * cube_size;
+    int rowIndex = cubeIndex / cube_size;
+    int colIndex = cubeIndex - rowIndex * cube_size;
 
     // int pickedShapeNormalMax = (pickedNormal[0] > pickedNormal[1] &&
     // pickedNormal[0] > pickedNormal[2]) ? 0 : (pickedNormal[1] >

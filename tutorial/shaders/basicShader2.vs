@@ -16,12 +16,11 @@ uniform mat4 Proj;
 uniform mat4 View;
 uniform mat4 Model;
 
-void main()
-{
-
-	texCoords0 = texcoord;
-	color0 = vec3(Kd);
-	normal0 = (Model  * vec4(normal, 0.0)).xyz;
-	position0 = vec3(Model * vec4(position, 1.0));
-	gl_Position = Proj *View * Model* vec4(position, 1.0); //you must have gl_Position
+void main() {
+  texCoords0 = texcoord;
+  color0 = vec3(Kd);
+  normal0 = (vec4(normal, 0.0)).xyz;
+  position0 = vec3(Model * vec4(position, 1.0));
+  gl_Position =
+      Proj * View * Model * vec4(position, 1.0); // you must have gl_Position
 }

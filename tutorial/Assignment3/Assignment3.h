@@ -28,9 +28,9 @@ public:
   ~Assignment3(void);
 
 private:
-  int cubeSize;
-  int animSpeed;
-  float currFrame;
+  int cube_size;
+  int anim_speed;
+  float curr_frame;
   bool rotate_clockwise;
   std::vector<int> cubesIndexs;
 };
