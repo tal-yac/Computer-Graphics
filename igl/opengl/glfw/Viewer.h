@@ -33,15 +33,6 @@
 #define IGL_MOD_ALT 0x0004
 #define IGL_MOD_SUPER 0x0008
 
-struct Operation {
-  int type;
-  std::vector<int> indices;
-};
-
-struct Cube {
-  unsigned int index;
-};
-
 namespace igl {
 namespace opengl {
 namespace glfw {
@@ -216,7 +207,6 @@ public:
   Shader *overlay_shader;
   Shader *overlay_point_shader;
   std::vector<Shader *> shaders;
-  std::queue<Operation> operations;
 
   // List of registered plugins
   //    std::vector<ViewerPlugin*> plugins;

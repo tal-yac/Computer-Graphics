@@ -80,6 +80,11 @@
         "xstring": "cpp",
         "xtr1common": "cpp",
         "xtree": "cpp",
-        "xutility": "cpp"
+        "xutility": "cpp",
+        "core": "cpp",
+        "*.evaluator": "cpp",
+        "alignedvector3": "cpp",
+        "bvh": "cpp",
+        "nonlinearoptimization": "cpp"
     }
 }

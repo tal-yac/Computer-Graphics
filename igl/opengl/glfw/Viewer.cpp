@@ -56,7 +56,7 @@ void Viewer::Init(const std::string config) {}
 
 IGL_INLINE Viewer::Viewer()
     : data_list(1), selected_data_index(0), next_data_id(1), next_shader_id(1),
-      isActive(false), pickedShape(-1), pickedShapeNormalMax{-1}, operations{} {
+      isActive(false), pickedShape(-1), pickedShapeNormalMax{-1} {
   data_list.front() = new ViewerData();
   data_list.front()->id = 0;
   staticScene = 0;

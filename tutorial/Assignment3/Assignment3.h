@@ -17,13 +17,13 @@ public:
   void AddOperation(int operation);
   void ReadOperation();
 
-  void UpdateAnimationSpeed(int change);
-  void toggleRotationDir();
+  void update_animation_speed(int change);
+  void toggle_rotation_dir();
   void addRotation(int faceDirection, int faceIndex);
   void rotateWall(int type, std::vector<int> indexs);
   void WhenPicked();
 
-  void AddCubeTexture();
+  void add_cube_texture();
 
   ~Assignment3(void);
 
