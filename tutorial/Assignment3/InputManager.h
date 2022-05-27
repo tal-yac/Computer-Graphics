@@ -35,7 +35,7 @@ void glfw_scroll_callback(GLFWwindow *window, double xoffset, double yoffset) {
     rndr->UpdateZpos((int)yoffset);
     rndr->MouseProccessing(GLFW_MOUSE_BUTTON_MIDDLE);
   } else {
-    rndr->MoveCamera(0, rndr->zTranslate, (float)yoffset);
+    rndr->MoveCamera(0, rndr->zTranslate, (float)(-yoffset));
   }
 }
 
