@@ -339,7 +339,7 @@ IGL_INLINE void Viewer::Draw(int shaderIndx, const Eigen::Matrix4f &Proj,
 
   Eigen::Matrix4f Normal;
 
-  ReadOperation();
+  read_operation();
 
   if (!(staticScene & (1 << viewportIndx)))
     Normal = MakeTransScale();

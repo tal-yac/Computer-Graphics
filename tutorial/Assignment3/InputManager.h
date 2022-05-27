@@ -77,14 +77,8 @@ void glfw_key_callback(GLFWwindow *window, int key, int scancode, int action,
     case GLFW_KEY_ESCAPE:
       glfwSetWindowShouldClose(window, GLFW_TRUE);
       break;
-
-    case GLFW_KEY_SPACE:
-      scn->toggle_rotation_dir();
-      break;
-
     case GLFW_KEY_UP:
       rndr->MoveCamera(0, scn->xRotate, 0.05f);
-
       break;
     case GLFW_KEY_DOWN:
       // scn->shapeTransformation(scn->xGlobalRotate,-5.f);
@@ -137,36 +131,37 @@ void glfw_key_callback(GLFWwindow *window, int key, int scancode, int action,
     case GLFW_KEY_F: // push front wall rot animation
       scn->AddOperation(5);
       break;
-    case GLFW_KEY_K: // push 2nd left wall rot animation
-      scn->AddOperation(10);
-      break;
-    case GLFW_KEY_E: // push 2nd right wall rot animation
-      scn->AddOperation(11);
-      break;
-    case GLFW_KEY_Y: // push 2nd up wall rot animation
-      scn->AddOperation(13);
-      break;
-    case GLFW_KEY_S: // push 2nd down wall rot animation
-      scn->AddOperation(12);
-      break;
-    case GLFW_KEY_V: // push 2nd back wall rot animation
-      scn->AddOperation(14);
-      break;
-    case GLFW_KEY_G: // push 2nd front wall rot animation
-      scn->AddOperation(15);
-      break;
-    case GLFW_KEY_Z:
-      scn->AddOperation(8);
+    case GLFW_KEY_SPACE:
+      scn->AddOperation(6);
       break;
     case GLFW_KEY_A:
       scn->AddOperation(7);
       break;
+    case GLFW_KEY_Z:
+      scn->AddOperation(8);
+      break;
+    // case GLFW_KEY_K: // push 2nd left wall rot animation
+    //   scn->AddOperation(10);
+    //   break;
+    // case GLFW_KEY_E: // push 2nd right wall rot animation
+    //   scn->AddOperation(11);
+    //   break;
+    // case GLFW_KEY_Y: // push 2nd up wall rot animation
+    //   scn->AddOperation(13);
+    //   break;
+    // case GLFW_KEY_S: // push 2nd down wall rot animation
+    //   scn->AddOperation(12);
+    //   break;
+    // case GLFW_KEY_V: // push 2nd back wall rot animation
+    //   scn->AddOperation(14);
+    //   break;
+    // case GLFW_KEY_G: // push 2nd front wall rot animation
+    //   scn->AddOperation(15);
+    //   break;
     case GLFW_KEY_M: // mix random 10 rotations
       for (int i = 0; i < 10; i++)
         scn->AddOperation(rand() % 6);
       break;
-    case GLFW_KEY_1:
-      scn->update_animation_speed(1);
     default:
       break;
     }

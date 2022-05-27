@@ -15,12 +15,12 @@ public:
   void Animate() override;
   void ScaleAllShapes(float amt, int viewportIndx);
   void AddOperation(int operation);
-  void ReadOperation();
+  void read_operation();
 
   void update_animation_speed(int change);
   void toggle_rotation_dir();
-  void addRotation(int faceDirection, int faceIndex);
-  void rotateWall(int type, std::vector<int> indexs);
+  void add_rotation(int faceDirection, int faceIndex);
+  void rotate_wall(int type, std::vector<int> indexs);
   void WhenPicked();
 
   void add_cube_texture();
@@ -28,9 +28,8 @@ public:
   ~Assignment3(void);
 
 private:
-  int cube_size;
   int anim_speed;
   float curr_frame;
   bool rotate_clockwise;
-  std::vector<int> cubesIndexs;
+  std::vector<int> cubes_indices;
 };

@@ -217,7 +217,7 @@ public:
 public:
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
-  virtual void ReadOperation(){};
+  virtual void read_operation(){};
 
   void Draw(int shaderIndx, const Eigen::Matrix4f &Proj,
             const Eigen::Matrix4f &View, int viewportIndx, unsigned int flgs,
