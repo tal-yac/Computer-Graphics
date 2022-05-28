@@ -66,7 +66,7 @@ void Assignment3::Init() {
 void Assignment3::Update(const Eigen::Matrix4f &Proj,
                          const Eigen::Matrix4f &View,
                          const Eigen::Matrix4f &Model, unsigned int shaderIndx,
-                         unsigned int shapeIndx) {
+                         unsigned int shapeIndx) {      
   Shader *s = shaders[shaderIndx];
   int r = ((pickedShape + 1) & 0x000000FF) >> 0;
   int g = ((pickedShape + 1) & 0x0000FF00) >> 8;
@@ -227,7 +227,6 @@ void Assignment3::rotate_wall(int type, std::vector<int> indices) {
     curr_frame = 0;
   } else
     amount *= anim_speed;
-
   int rotate_offset = xRotate;
   for (int i = 0; i < CUBE_SIZE * CUBE_SIZE; i++) {
     pickedShape = indices[i];
@@ -264,7 +263,7 @@ void Assignment3::WhenPicked() {
       break;
     }
   } else {
-    std::cout << "Element not found";
+    std::cout << "Element not found" << std::endl;
   }
 }
 

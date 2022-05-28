@@ -78,20 +78,20 @@ void glfw_key_callback(GLFWwindow *window, int key, int scancode, int action,
       glfwSetWindowShouldClose(window, GLFW_TRUE);
       break;
     case GLFW_KEY_UP:
-      rndr->MoveCamera(0, scn->xRotate, 0.05f);
+      rndr->MoveCamera(0, scn->xRotate, -0.05f);
       break;
     case GLFW_KEY_DOWN:
       // scn->shapeTransformation(scn->xGlobalRotate,-5.f);
       // cout<< "down: "<<endl;
-      rndr->MoveCamera(0, scn->xRotate, -0.05f);
+      rndr->MoveCamera(0, scn->xRotate, 0.05f);
       break;
     case GLFW_KEY_LEFT:
-      rndr->MoveCamera(0, scn->yRotate, 0.05f);
+      rndr->MoveCamera(0, scn->yRotate, -0.05f);
       break;
     case GLFW_KEY_RIGHT:
       // scn->shapeTransformation(scn->xGlobalRotate,-5.f);
       // cout<< "down: "<<endl;
-      rndr->MoveCamera(0, scn->yRotate, -0.05f);
+      rndr->MoveCamera(0, scn->yRotate, 0.05f);
       break;
     // case GLFW_KEY_U:
     // 	rndr->MoveCamera(0, scn->yTranslate, 0.25f);
