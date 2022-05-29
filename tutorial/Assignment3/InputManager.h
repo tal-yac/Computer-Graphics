@@ -114,31 +114,31 @@ void glfw_key_callback(GLFWwindow *window, int key, int scancode, int action,
     // 	rndr->MoveCamera(0, scn->zTranslate, -0.5f);
     // 	break;
     case GLFW_KEY_L: // push left wall rot animation
-      scn->AddOperation(0);
+      scn->add_operation(Cube_face::LEFT);
       break;
     case GLFW_KEY_R: // push right wall rot animation
-      scn->AddOperation(1);
+      scn->add_operation(Cube_face::RIGHT);
       break;
     case GLFW_KEY_D: // push down wall rot animation
-      scn->AddOperation(2);
+      scn->add_operation(Cube_face::DOWN);
       break;
     case GLFW_KEY_U: // push up wall rot animation
-      scn->AddOperation(3);
+      scn->add_operation(Cube_face::UP);
       break;
     case GLFW_KEY_B: // push back wall rot animation
-      scn->AddOperation(4);
+      scn->add_operation(Cube_face::BACK);
       break;
     case GLFW_KEY_F: // push front wall rot animation
-      scn->AddOperation(5);
+      scn->add_operation(Cube_face::FRONT);
       break;
     case GLFW_KEY_SPACE:
-      scn->AddOperation(6);
+      scn->add_operation(6);
       break;
     case GLFW_KEY_A:
-      scn->AddOperation(7);
+      scn->add_operation(7);
       break;
     case GLFW_KEY_Z:
-      scn->AddOperation(8);
+      scn->add_operation(8);
       break;
     // case GLFW_KEY_K: // push 2nd left wall rot animation
     //   scn->AddOperation(10);
@@ -160,7 +160,7 @@ void glfw_key_callback(GLFWwindow *window, int key, int scancode, int action,
     //   break;
     case GLFW_KEY_M: // mix random 10 rotations
       for (int i = 0; i < 10; i++)
-        scn->AddOperation(rand() % 6);
+        scn->add_operation(rand() % 6);
       break;
     default:
       break;

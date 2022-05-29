@@ -80,7 +80,6 @@ public:
   virtual void Init(const std::string config);
   virtual void Animate() {}
   virtual void WhenTranslate() {}
-  virtual void WhenPicked(){};
   virtual Eigen::Vector3d GetCameraPosition() {
     return Eigen::Vector3d(0, 0, 0);
   }
@@ -216,8 +215,6 @@ public:
 
 public:
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW
-
-  virtual void read_operation(){};
 
   void Draw(int shaderIndx, const Eigen::Matrix4f &Proj,
             const Eigen::Matrix4f &View, int viewportIndx, unsigned int flgs,

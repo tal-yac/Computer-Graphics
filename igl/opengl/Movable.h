@@ -9,15 +9,6 @@ class Movable {
 public:
   enum { preRot, postRot, phiRot, thetaRot, psiRot, psiPhiRot };
 
-  struct Operation {
-    int type;
-    std::vector<int> indices;
-  };
-
-  struct Cube {
-    unsigned int index;
-  };
-
   Movable();
   Movable(const Movable &mov);
   Eigen::Matrix4f MakeTransScale();
@@ -33,6 +24,8 @@ public:
   void MyRotate(const Eigen::Matrix3d &rot);
   void MyScale(Eigen::Vector3d amt);
 
+  virtual void WhenPicked(){};
+
   void ZeroTrans();
 
   Eigen::Matrix3d GetRotation() const { return Tout.rotation().matrix(); }
@@ -40,6 +33,4 @@ public:
 
 private:
   Eigen::Affine3d Tout, Tin;
-public:
-  std::queue<Operation> operations;
 };
