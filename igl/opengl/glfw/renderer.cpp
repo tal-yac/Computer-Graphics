@@ -279,13 +279,34 @@ Renderer::~Renderer()
 bool Renderer::Picking(int x, int y)
 {
 
-    Eigen::Vector4d pos;
+// ActionDraw(0);
+    // Eigen::Vector4d pos;
+ glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+glDisable(GL_LIGHTING);
 
-    unsigned char data[4];
-    //glGetIntegerv(GL_VIEWPORT, viewport); //reading viewport parameters
-    int i = 0;
-    isPicked =  scn->Picking(data,i);
-    return isPicked;
+
+  for (int i = 0; i < drawInfos.size(); i++)
+	{
+		if (drawInfos[i]->flags & inAction){
+			draw_by_info(i);
+			GLint viewport[4];
+			glGetIntegerv(GL_VIEWPORT, viewport); //reading viewport parameters
+			// int xPos = x * (xrel);
+			// int yPos = y * (yrel);
+			int bs = i == 0 ? 1 : 40, cp = 0, size = 4 * bs * bs;
+			unsigned char *data = new unsigned char[size];
+			glReadPixels(x, viewport[0] - x, bs, bs, GL_RGBA, GL_UNSIGNED_BYTE, data);
+			glReadPixels(y, viewport[0] - y, 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, &depth);
+			for (int j = 0; j < size; j+=4){
+				if((data + j)[3] > 3){ cp = j; break; }
+			}
+			bool p = scn->Picking(data, cp);
+			delete[] data;
+			if(p) return true;
+		}
+	}
+
+	return false;
 
 }
 

@@ -339,8 +339,6 @@ IGL_INLINE void Viewer::Draw(int shaderIndx, const Eigen::Matrix4f &Proj,
 
   Eigen::Matrix4f Normal;
 
-  read_operation();
-
   if (!(staticScene & (1 << viewportIndx)))
     Normal = MakeTransScale();
   else
@@ -610,6 +608,8 @@ void Viewer::ShapeTransformation(int type, float amt, int mode) {
 }
 
 bool Viewer::Picking(unsigned char data[4], int newViewportIndx) {
+  // for(int i  =0;i<4;i++)
+  // std::cout << (int)data[i] << std::endl;
   // pickedShape = -1;
   // if (data[0] > 0) {
   //   pickedShape = data[0] - 1;
@@ -622,6 +622,15 @@ bool Viewer::Picking(unsigned char data[4], int newViewportIndx) {
   //   WhenPicked();
   //   return true;
   // }
+  
+  pickedShape = data[0]; //r 
+		std::cout << pickedShape << "\n";
+		std::cout << (int)data[0] << "\n";
+		std::cout << (int)data[1] << "\n";
+		std::cout << (int)data[2] << "\n";
+		std::cout << (int)data[3] << "\n";
+    
+	WhenPicked();
   return false;
 }
 
