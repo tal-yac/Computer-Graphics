@@ -8,5 +8,5 @@ in vec3 normal0;
 out vec4 Color;
 void main()
 {
-	Color = vec4(lightColor.rgb * abs(normal0),lightColor.a);
+	Color = vec4(lightColor.r, abs(normal0));
 }

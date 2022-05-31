@@ -281,32 +281,45 @@ bool Renderer::Picking(int x, int y)
 
 // ActionDraw(0);
     // Eigen::Vector4d pos;
- glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+//  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+// glDisable(GL_LIGHTING);
+
+
+//   for (int i = 0; i < drawInfos.size(); i++)
+// 	{
+// 		if (drawInfos[i]->flags & inAction){
+// 			draw_by_info(i);
+// 			GLint viewport[4];
+// 			glGetIntegerv(GL_VIEWPORT, viewport); //reading viewport parameters
+// 			// int xPos = x * (xrel);
+// 			// int yPos = y * (yrel);
+// 			int bs = i == 0 ? 1 : 40, cp = 0, size = 4 * bs * bs;
+// 			unsigned char *data = new unsigned char[size];
+// 			glReadPixels(x, viewport[3] - x, bs, bs, GL_RGBA, GL_UNSIGNED_BYTE, data);
+// 			glReadPixels(y, viewport[3] - y, 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, &depth);
+// 			for (int j = 0; j < size; j+=4){
+// 				if((data + j)[3] > 3){ cp = j; break; }
+// 			}
+// 			bool p = scn->Picking(data, cp);
+// 			delete[] data;
+// 			if(p) return true;
+// 		}
+// 	}
+
+
+ActionDraw(0);
+glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 glDisable(GL_LIGHTING);
 
+	GLint viewport[4];
+	unsigned char data[4];
+	glGetIntegerv(GL_VIEWPORT, viewport); //reading viewport parameters
+	glReadPixels(x, viewport[3] - y, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, data);
+	glReadPixels(x, viewport[3] - y, 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, &depth);
 
-  for (int i = 0; i < drawInfos.size(); i++)
-	{
-		if (drawInfos[i]->flags & inAction){
-			draw_by_info(i);
-			GLint viewport[4];
-			glGetIntegerv(GL_VIEWPORT, viewport); //reading viewport parameters
-			// int xPos = x * (xrel);
-			// int yPos = y * (yrel);
-			int bs = i == 0 ? 1 : 40, cp = 0, size = 4 * bs * bs;
-			unsigned char *data = new unsigned char[size];
-			glReadPixels(x, viewport[0] - x, bs, bs, GL_RGBA, GL_UNSIGNED_BYTE, data);
-			glReadPixels(y, viewport[0] - y, 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, &depth);
-			for (int j = 0; j < size; j+=4){
-				if((data + j)[3] > 3){ cp = j; break; }
-			}
-			bool p = scn->Picking(data, cp);
-			delete[] data;
-			if(p) return true;
-		}
-	}
+	return scn->Picking(data, 3);
 
-	return false;
+	// return false;
 
 }
 
@@ -346,7 +359,7 @@ void Renderer::ActionDraw(int viewportIndx)
     }
     for (int i = 0; i < drawInfos.size(); i++)
     {
-        if ((drawInfos[i]->flags & inAction) && viewportIndx == drawInfos[i]->viewportIndx)
+        if ((drawInfos[i]->flags & inAction) /*&& viewportIndx == drawInfos[i]->viewportIndx*/)
             draw_by_info(i);
     }
     if (menu)

@@ -35,8 +35,7 @@ void printFace(int cubeSize, std::vector<int> &Cube) {
   }
 }
 
-void printCube(int cubeSize, std::vector<int> &cube) {
-  // std::cout << "cube" << std::endl;
+void Assignment3::print_cube() {
   // for (int i = 0; i < cubeSize; i++) {
   //   for (int k = 0; k < cubeSize; k++) {
   //     for (int j = 0; j < cubeSize; j++) {
@@ -51,16 +50,17 @@ void printCube(int cubeSize, std::vector<int> &cube) {
   //   }
   //   std::cout << std::endl;
   // }
-  for (int i = 0; i < cube.size(); i++) {
+  std::cout << "CUBE" << '\n';
+  for (int i = 0; i < cubes_indices.size(); i++) {
     if (i < 10)
       std::cout << "0";
     std::cout << i << " ";
   }
-  std::cout << std::endl;
-  for (int i = 0; i < cube.size(); i++) {
-    if (cube[i] < 10)
+  std::cout << '\n';
+  for (const auto &i : cubes_indices) {
+    if (i < 10)
       std::cout << "0";
-    std::cout << cube[i] << " ";
+    std::cout << i << " ";
   }
   std::cout << std::endl;
 }
@@ -84,7 +84,7 @@ void Assignment3::Init() {
   add_cube_texture();
   update_animation_speed(0);
   pickedShape = -1;
-  SetShapeShader(0, 1);
+  SetShapeShader(0, 0);
 }
 
 void Assignment3::Update(const Eigen::Matrix4f &Proj,
@@ -105,7 +105,7 @@ void Assignment3::Update(const Eigen::Matrix4f &Proj,
   s->SetUniformMat4f("View", View);
   s->SetUniformMat4f("Model", Model);
   s->SetUniformMat4f("Proj", Proj);
-  s->SetUniform4f("lightColor", r / 255.0, 0, 0, 0);
+  s->SetUniform4f("lightColor", r / 255.0, g / 255.0, b / 255.0, 0);
   s->Unbind();
 }
 
@@ -168,7 +168,6 @@ std::vector<int> get_face_indices(int cube_size, int direction,
   default:
     break;
   }
-  print_vec(STRINGIFY(get_face_indices), indices);
   return indices;
 }
 
@@ -187,7 +186,6 @@ std::vector<int> rotated_face_indices(int cube_size, bool clockwise) {
       }
     }
   }
-  print_vec("new_positions", new_positions);
   return new_positions;
 }
 
@@ -203,11 +201,10 @@ void Assignment3::add_rotation(int face_direction, int face_index) {
   for (int i = 0; i < CUBE_SIZE * CUBE_SIZE; i++) {
     cubes_indices[old_positions[i]] = values[rotated_positions[i]];
   }
-  print_vec(STRINGIFY(values), values);
   Operation operation;
   operation.type = face_direction;
   operation.indices = values;
-  printCube(CUBE_SIZE, cubes_indices);
+  print_cube();
   operations.push(operation);
 }
 
@@ -255,52 +252,32 @@ void Assignment3::rotate_wall(int type, std::vector<int> &indices) {
 }
 
 void Assignment3::WhenPicked() {
-  // pickedShape = -1;
-  // std::vector<int>::iterator itr =
-  //     std::find(cubes_indices.begin(), cubes_indices.end(), pickedShape);
-  // if (itr != cubes_indices.cend()) {
-  //   int cube_index = std::distance(cubes_indices.begin(), itr);
-  //   std::cout << pickedShape << " present at index " << cube_index <<
-  //   std::endl; int face_index = cube_index / (CUBE_SIZE * CUBE_SIZE);
-  //   cube_index -= face_index * CUBE_SIZE * CUBE_SIZE;
-  //   int row_index = cube_index / CUBE_SIZE;
-  //   int col_index = cube_index - row_index * CUBE_SIZE;
-  //   switch (pickedShapeNormalMax) {
-  //   case 0:
-  //     add_rotation(0, col_index);
-  //     break;
-  //   case 1:
-  //     add_rotation(1, row_index);
-  //     break;
-  //   case 2:
-  //     add_rotation(2, face_index);
-  //   default:
-  //     break;
-  //   }
-  // } else {
-  //   std::cout << "Element not found" << std::endl;
-  // }
-  int psw = pickedShape >> 8, walls[3] = {-1, -1, -1};
-  pickedShape &= 0xFF;
-  int c = CUBE_SIZE, c2 = c * c;
-
-  //     // find the appropriate wall according to formulas
-  for (int i = 0; i < c2; i++) {
-    if (pickedShape == c * i)
-      walls[0] = 0;
-    else if (pickedShape == c * i + c - 1)
-      walls[0] = 1;
-    if (pickedShape == c2 * (i / c) + i % c + c * (c - 1))
-      walls[1] = 3;
-    else if (pickedShape == c2 * (i / c) + i % c)
-      walls[1] = 2;
-    if (pickedShape == i + (c - 1) * c2)
-      walls[2] = 5;
-    else if (pickedShape == i)
-      walls[2] = 4;
+  auto itr = std::find(cubes_indices.begin(), cubes_indices.end(), pickedShape);
+  if (itr == cubes_indices.cend()) {
+    std::cout << "Element not found" << std::endl;
+    pickedShape = -1;
+    return;
   }
-  add_operation(walls[psw]);
-  std::cout << "whenpicked" << std::endl;
+  int cubeIndex = std::distance(cubes_indices.begin(), itr);
+  std::cout << pickedShape << " present at index " << cubeIndex << std::endl;
+  int faceIndex = cubeIndex / (CUBE_SIZE * CUBE_SIZE);
+  cubeIndex -= faceIndex * CUBE_SIZE * CUBE_SIZE;
+  int rowIndex = cubeIndex / CUBE_SIZE;
+  int colIndex = cubeIndex - rowIndex * CUBE_SIZE;
+
+  switch (pickedShapeNormalMax) {
+  case 0:
+    add_rotation(0, colIndex);
+    break;
+  case 1:
+    add_rotation(1, rowIndex);
+    break;
+  case 2:
+    add_rotation(2, faceIndex);
+  default:
+    break;
+  }
+  pickedShape = -1;
 }
 
 void Assignment3::add_cube_texture() {
@@ -320,20 +297,6 @@ void Assignment3::add_cube_texture() {
       }
     }
   }
-  print_vec(STRINGIFY(cube), cubes_indices);
-  // for (int i = 0; i < CUBE_SIZE * CUBE_SIZE * CUBE_SIZE; i++) {
-  //   AddShape(Cube, -1, TRIANGLES);
-  //   pickedShape = i;
-  //   SetShapeMaterial(i, 0);
-  //   cubes_indices.push_back(i);
-  //   float d = 0.5 * (CUBE_SIZE - 1);
-  //   ShapeTransformation(xTranslate, 2 * (i % CUBE_SIZE - d), 0);
-  //   ShapeTransformation(yTranslate,
-  //                       2 * ((i % CUBE_SIZE * CUBE_SIZE) / CUBE_SIZE - d),
-  //                       0);
-  //   ShapeTransformation(zTranslate, -2 * (i / CUBE_SIZE * CUBE_SIZE - d), 0);
-  // }
-  // printCube(CUBE_SIZE, cubes_indices);
 }
 
 Assignment3::~Assignment3(void) {}

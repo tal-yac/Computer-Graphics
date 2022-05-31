@@ -26,9 +26,10 @@ public:
   void WhenTranslate();
   void Animate() override;
   void ScaleAllShapes(float amt, int viewportIndx);
+
+  void print_cube();
   void add_operation(int opcode);
   void read_operation();
-
   void update_animation_speed(int change);
   void toggle_rotation_dir();
   void add_rotation(int face_direction, int face_index);

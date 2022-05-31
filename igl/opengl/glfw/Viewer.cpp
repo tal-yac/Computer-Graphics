@@ -622,15 +622,31 @@ bool Viewer::Picking(unsigned char data[4], int newViewportIndx) {
   //   WhenPicked();
   //   return true;
   // }
-  
-  pickedShape = data[0]; //r 
-		std::cout << pickedShape << "\n";
-		std::cout << (int)data[0] << "\n";
-		std::cout << (int)data[1] << "\n";
-		std::cout << (int)data[2] << "\n";
-		std::cout << (int)data[3] << "\n";
-    
-	WhenPicked();
+
+  std::cout << "pickedShape" << "\n";
+		std::cout << (int)data[0] << " ";
+		std::cout << (int)data[1] << " ";
+		std::cout << (int)data[2] << " ";
+		std::cout << (int)data[3] << std::endl;
+    // data[0] = 5;
+    pickedShape = data[0] - 1;
+    pickedShapeNormalMax = 1;
+    WhenPicked();
+    return true;
+
+
+  // pickedShape = -1;
+  // if (data[0] > 0) {
+  //   pickedShape = data[0] - 1;
+  //   if (data[1] == 255)
+  //     pickedShapeNormalMax = 0;
+  //   else if (data[2] == 255)
+  //     pickedShapeNormalMax = 1;
+  //   else
+  //     pickedShapeNormalMax = 2;
+  //   WhenPicked();
+  //   return true;
+  // }
   return false;
 }
 
