@@ -15,9 +15,8 @@ void glfw_mouse_callback(GLFWwindow *window, int button, int action, int mods) {
     rndr->UpdatePress(x2, y2);
     if (button == GLFW_MOUSE_BUTTON_RIGHT) {
       rndr->Picking((int)x2, (int)y2);
-      // rndr->UpdatePosition(x2, y2);
-      // rndr->Pressed();
-    } else {
+    }
+    else {
       rndr->UnPick(2);
     }
 

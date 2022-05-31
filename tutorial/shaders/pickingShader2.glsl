@@ -1,7 +1,5 @@
 #version 330
 
-
-uniform sampler2D sampler1;
 uniform vec4 lightColor;
 
 in vec3 normal0;

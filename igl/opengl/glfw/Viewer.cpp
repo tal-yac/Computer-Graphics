@@ -608,45 +608,23 @@ void Viewer::ShapeTransformation(int type, float amt, int mode) {
 }
 
 bool Viewer::Picking(unsigned char data[4], int newViewportIndx) {
-  // for(int i  =0;i<4;i++)
-  // std::cout << (int)data[i] << std::endl;
-  // pickedShape = -1;
-  // if (data[0] > 0) {
-  //   pickedShape = data[0] - 1;
-  //   if (data[1] == 255)
-  //     pickedShapeNormalMax = 0;
-  //   else if (data[2] == 255)
-  //     pickedShapeNormalMax = 1;
-  //   else
-  //     pickedShapeNormalMax = 2;
-  //   WhenPicked();
-  //   return true;
-  // }
-
-  std::cout << "pickedShape" << "\n";
-		std::cout << (int)data[0] << " ";
-		std::cout << (int)data[1] << " ";
-		std::cout << (int)data[2] << " ";
-		std::cout << (int)data[3] << std::endl;
-    // data[0] = 5;
+  std::cout << "pickedShape"
+            << "\n";
+  std::cout << (int)data[0] << " ";
+  std::cout << (int)data[1] << " ";
+  std::cout << (int)data[2] << " ";
+  std::cout << (int)data[3] << std::endl;
+  if (data[0] > 0) {
     pickedShape = data[0] - 1;
-    pickedShapeNormalMax = 1;
-    WhenPicked();
+    if (data[1] == 255)
+      pickedShapeNormalMax = 0;
+    else if (data[2] == 255)
+      pickedShapeNormalMax = 1;
+    else
+      pickedShapeNormalMax = 2;
+    WhenPick();
     return true;
-
-
-  // pickedShape = -1;
-  // if (data[0] > 0) {
-  //   pickedShape = data[0] - 1;
-  //   if (data[1] == 255)
-  //     pickedShapeNormalMax = 0;
-  //   else if (data[2] == 255)
-  //     pickedShapeNormalMax = 1;
-  //   else
-  //     pickedShapeNormalMax = 2;
-  //   WhenPicked();
-  //   return true;
-  // }
+  }
   return false;
 }
 

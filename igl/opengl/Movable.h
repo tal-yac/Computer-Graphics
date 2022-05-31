@@ -24,7 +24,7 @@ public:
   void MyRotate(const Eigen::Matrix3d &rot);
   void MyScale(Eigen::Vector3d amt);
 
-  virtual void WhenPicked(){};
+  virtual void WhenPick(){};
 
   void ZeroTrans();
 

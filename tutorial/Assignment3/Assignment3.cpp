@@ -36,20 +36,6 @@ void printFace(int cubeSize, std::vector<int> &Cube) {
 }
 
 void Assignment3::print_cube() {
-  // for (int i = 0; i < cubeSize; i++) {
-  //   for (int k = 0; k < cubeSize; k++) {
-  //     for (int j = 0; j < cubeSize; j++) {
-  //       int val =
-  //           Cube[k * cubeSize * cubeSize + (cubeSize - i - 1) * cubeSize +
-  //           j];
-  //       std::cout << ((val < 10) ? "0" + std::to_string(val)
-  //                                : std::to_string(val))
-  //                 << " ";
-  //     }
-  //     std::cout << "|";
-  //   }
-  //   std::cout << std::endl;
-  // }
   std::cout << "CUBE" << '\n';
   for (int i = 0; i < cubes_indices.size(); i++) {
     if (i < 10)
@@ -77,14 +63,15 @@ Assignment3::Assignment3() {
 // }
 
 void Assignment3::Init() {
-  unsigned int texIDs[3] = {0, 1, 0};
-  unsigned int slots[3] = {0, 1, 0};
+  unsigned int texIDs[3] = {0, 1, 2};
+  unsigned int slots[3] = {0, 1, 2};
   AddShader("shaders/pickingShader2");
   AddShader("shaders/basicShader2");
+  AddMaterial(texIDs, slots, 1);
+  AddMaterial(texIDs + 1, slots + 1, 1);
   add_cube_texture();
   update_animation_speed(0);
   pickedShape = -1;
-  SetShapeShader(0, 0);
 }
 
 void Assignment3::Update(const Eigen::Matrix4f &Proj,
@@ -92,11 +79,9 @@ void Assignment3::Update(const Eigen::Matrix4f &Proj,
                          const Eigen::Matrix4f &Model, unsigned int shaderIndx,
                          unsigned int shapeIndx) {
   Shader *s = shaders[shaderIndx];
-  int r = ((pickedShape + 1) & 0x000000FF) >> 0;
-  // if (r)
-  //   std::cout << "r: " << r << std::endl;
-  int g = ((pickedShape + 1) & 0x0000FF00) >> 8;
-  int b = ((pickedShape + 1) & 0x00FF0000) >> 16;
+  int r = ((shapeIndx + 1) & 0x000000FF) >> 0;
+  int g = ((shapeIndx + 1) & 0x0000FF00) >> 8;
+  int b = ((shapeIndx + 1) & 0x00FF0000) >> 16;
   if (data_list[shapeIndx]->GetMaterial() >= 0 && !materials.empty()) {
     BindMaterial(s, data_list[shapeIndx]->GetMaterial());
   }
@@ -105,7 +90,8 @@ void Assignment3::Update(const Eigen::Matrix4f &Proj,
   s->SetUniformMat4f("View", View);
   s->SetUniformMat4f("Model", Model);
   s->SetUniformMat4f("Proj", Proj);
-  s->SetUniform4f("lightColor", r / 255.0, g / 255.0, b / 255.0, 0);
+  if (shaderIndx == 0)
+    s->SetUniform4f("lightColor", r / 255.0, g / 255.0, b / 255.0, 0);
   s->Unbind();
 }
 
@@ -249,9 +235,10 @@ void Assignment3::rotate_wall(int type, std::vector<int> &indices) {
     pickedShape = indices[i];
     ShapeTransformation(rotate_offset + type, amount, 1);
   }
+  pickedShape = -1;
 }
 
-void Assignment3::WhenPicked() {
+void Assignment3::WhenPick() {
   auto itr = std::find(cubes_indices.begin(), cubes_indices.end(), pickedShape);
   if (itr == cubes_indices.cend()) {
     std::cout << "Element not found" << std::endl;
@@ -282,6 +269,7 @@ void Assignment3::WhenPicked() {
 
 void Assignment3::add_cube_texture() {
   AddTexture("textures/plane.png", 2);
+  AddTexture("textures/plane1.png", 2);
   float center = (CUBE_SIZE - 1.0f) / 2.0f;
   int pad = 1;
   for (int i = 0; i < CUBE_SIZE; i++) {
@@ -289,7 +277,8 @@ void Assignment3::add_cube_texture() {
       for (int k = 0; k < CUBE_SIZE; k++) {
         AddShape(Cube, -1, TRIANGLES);
         pickedShape = i * CUBE_SIZE * CUBE_SIZE + j * CUBE_SIZE + k;
-        SetShapeMaterial(i, 0);
+        SetShapeShader(pickedShape, 1);
+        SetShapeMaterial(pickedShape, 0);
         ShapeTransformation(xTranslate, pad * (k - center), 0);
         ShapeTransformation(yTranslate, pad * (j - center), 0);
         ShapeTransformation(zTranslate, pad * (i - center), 0);

@@ -34,7 +34,7 @@ public:
   void toggle_rotation_dir();
   void add_rotation(int face_direction, int face_index);
   void rotate_wall(int type, std::vector<int> &indices);
-  void WhenPicked();
+  void WhenPick();
 
   void add_cube_texture();
 
