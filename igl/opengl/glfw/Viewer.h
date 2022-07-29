@@ -25,6 +25,7 @@
 #include <Eigen/Geometry>
 
 #include <vector>
+#include <list>
 #include <string>
 #include <cstdint>
 
@@ -48,7 +49,7 @@ namespace glfw
       enum axis { xAxis, yAxis, zAxis };
       enum transformations { xTranslate, yTranslate, zTranslate, xRotate, yRotate, zRotate, xScale, yScale, zScale,scaleAll,reset };
       enum modes { POINTS, LINES, LINE_LOOP, LINE_STRIP, TRIANGLES, TRIANGLE_STRIP, TRIANGLE_FAN, QUADS };
-      enum shapes { Axis, Plane, Cube, Octahedron, Tethrahedron, LineCopy, MeshCopy, Sphere };
+      enum shapes {Axis, xCylinder,yCylinder,zCylinder, Plane, Cube, Octahedron, Tethrahedron, LineCopy, MeshCopy, Sphere };
       enum buffers { COLOR, DEPTH, STENCIL, BACK, FRONT, NONE };
     // UI Enumerations
    // enum class MouseButton {Left, Middle, Right};
@@ -98,8 +99,8 @@ namespace glfw
     //
     // Inputs:
     //   mesh_id  unique identifier associated to the desired mesh (current mesh if -1)
-    IGL_INLINE ViewerData* data(int mesh_id = -1);
-    IGL_INLINE const ViewerData* data(int mesh_id = -1) const;
+    IGL_INLINE virtual ViewerData* data(int mesh_id = -1);
+    IGL_INLINE virtual const ViewerData* data(int mesh_id = -1) const;
 
     // Append a new "slot" for a mesh (i.e., create empty entries at the end of
     // the data_list and opengl_state_list.
@@ -111,7 +112,7 @@ namespace glfw
     // Side Effects:
     //   selected_data_index is set this newly created, last entry (i.e.,
     //   #meshes-1)
-    IGL_INLINE int append_mesh(bool visible = true);
+    IGL_INLINE virtual int append_mesh(bool visible = true);
 
     // Erase a mesh (i.e., its corresponding data and state entires in data_list
     // and opengl_state_list)
@@ -154,9 +155,9 @@ public:
 	std::vector<int> parents;
     std::vector<Texture*> textures;
     std::vector<Material*> materials;
-    int pickedShape;
+    std::list<int> pickedShapes;
     Eigen::Vector3d pickedNormal;
-    size_t selected_data_index;
+    int selected_data_index;
     int next_data_id;
     int next_shader_id; // for flags to mack sure all shaders are initlize with data
 	bool isActive;
@@ -177,7 +178,7 @@ public:
   public:
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
-      void
+      virtual void
       Draw(int shaderIndx, const Eigen::Matrix4f &Proj, const Eigen::Matrix4f &View, int viewportIndx,
            unsigned int flgs,unsigned int property_id);
 
@@ -216,12 +217,12 @@ public:
 
       void SetShader_point_overlay(const std::string &fileName);
 
-      int AddShapeCopy(int indx, int parent, unsigned int mode, int viewport = 0);
+      int AddShapeCopy(int shpIndx, int parent, unsigned int mode, int viewport = 0);
 
       void ShapeTransformation(int type, float amt, int mode);
 
       virtual bool Picking(unsigned char data[4], int newViewportIndx);
-      inline void UnPick() { pickedShape = -1; }
+      inline void UnPick() { selected_data_index = -1; pickedShapes.clear(); }
 
       bool load_mesh_from_data(const Eigen::MatrixXd &V, const Eigen::MatrixXi &F, const Eigen::MatrixXd &UV_V,
                                const Eigen::MatrixXi &UV_F);
